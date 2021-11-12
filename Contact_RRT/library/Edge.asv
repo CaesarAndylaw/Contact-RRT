@@ -1,0 +1,10 @@
+classdef Edge 
+    properties
+        edge
+    end
+    methods
+        function obj == Edge(s1, s2)
+            obj.edge = {s1, s2abcd;}
+        end
+    end
+end
