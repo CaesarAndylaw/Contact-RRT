@@ -4,6 +4,7 @@ classdef State
       Sigma
       particles
       predecessor
+      wall_property % can only be 'H': horizontal or 'V': vertical or 'B' both contact
    end
    methods        
         function obj = State(particles)

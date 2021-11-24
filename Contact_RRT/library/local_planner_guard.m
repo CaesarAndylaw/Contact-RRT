@@ -63,4 +63,19 @@ function [x_new, invalid_sample] = local_planner_guard(p_smp, x_near, height, ma
         % second situation, all contact, but not same surface
         invalid_sample = true;
     end
+
+    if invalid_sample == false
+        % find the valid sample, and if all particles are in contact,
+        % then determine vertical or horizontal wall 
+        diag_sigma = diag(x_new.Sigma);
+        if diag_sigma(1) < 0.01 && diag_sigma(2) > 0.01
+            x_new.wall_property = 'V';
+        end 
+        if diag_sigma(1) > 0.01 && diag_sigma(2) < 0.01
+            x_new.wall_property = 'H';
+        end 
+        if diag_sigma(1) < 0.01 && diag_sigma(2) < 0.01
+            x_new.wall_property = 'B';
+        end 
+    end
 end

@@ -52,7 +52,7 @@ x_init.mu = mu;
 x_init.Sigma = Sigma;
 
 % set the goal
-goal = [20, 8]; 
+goal = [20, 21]; 
 radius = 3;
 
 % the motion error
@@ -156,7 +156,8 @@ h = ccl(goal(1),goal(2),radius);
 
 % draw the particle trajectory 
 x_tmp = final_x;
-for i = 1:size(x_tmp.particles, 1)
+% for i = 1:size(x_tmp.particles, 1)
+    i = 1;
     x_tmp = final_x;
     trajectory = [x_tmp.particles(i,:)];
     while true
@@ -170,8 +171,19 @@ for i = 1:size(x_tmp.particles, 1)
     plot(trajectory(:,1),trajectory(:,2),"Color",[0 0.4470 0.7410],'LineStyle','-','LineWidth',1);
 %     xlim([-100,100])
 %     ylim([-100,100])
-end
+% end
 
+
+% print the tranverse contact type 
+x_tmp = final_x;
+disp(x_tmp.wall_property);
+while true
+    x_tmp = x_tmp.predecessor;
+    if size(x_tmp.predecessor, 1) == 0
+        break
+    end
+    disp(x_tmp.wall_property);
+end
 
 
 %% functions 
