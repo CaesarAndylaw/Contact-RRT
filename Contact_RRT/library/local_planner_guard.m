@@ -23,12 +23,6 @@ function [x_new, invalid_sample] = local_planner_guard(p_smp, x_near, height, ma
 %         for j = 1:steps
         j = 0;
         while collision == false
-%             if j <= steps - 1
-%                 tmp_point = x_near.particles(i,:) + j*resolution/norm(tmp_diff)*tmp_diff; % mid point resolution
-%             else
-%                 tmp_point = x_near.particles(i,:) + tmp_diff; % original target 
-%             end
-
             % add one time step 
             j = j + 1;
             tmp_point = x_near.particles(i,:) + j*resolution/norm(tmp_diff)*tmp_diff;
@@ -69,13 +63,24 @@ function [x_new, invalid_sample] = local_planner_guard(p_smp, x_near, height, ma
         % then determine vertical or horizontal wall 
         diag_sigma = diag(x_new.Sigma);
         if diag_sigma(1) < 0.01 && diag_sigma(2) > 0.01
-            x_new.wall_property = 'V';
+            % make sure it is actually in contact 
+            [left_contact, right_contact] = check_verticle_contact(x_new, map_grid, height);
+            if left_contact + right_contact == 1
+                x_new.wall_property = 'V';
+            end
         end 
         if diag_sigma(1) > 0.01 && diag_sigma(2) < 0.01
-            x_new.wall_property = 'H';
+            [up_contact, down_contact] = check_horizontal_contact(x_new, map_grid, height);
+            if up_contact + down_contact == 1
+                x_new.wall_property = 'H';
+            end
         end 
         if diag_sigma(1) < 0.01 && diag_sigma(2) < 0.01
-            x_new.wall_property = 'B';
+            [left_contact, right_contact] = check_verticle_contact(x_new, map_grid, height);
+            [up_contact, down_contact] = check_horizontal_contact(x_new, map_grid, height);
+            if up_contact + down_contact == 1 && left_contact + right_contact == 1
+                x_new.wall_property = 'B';
+            end
         end 
     end
 end
